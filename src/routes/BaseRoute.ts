@@ -1,11 +1,12 @@
-import express from "express";
-class BaseRoute {
-    public router: express.Router;
-
+import express, { Router } from "express";
+abstract class BaseRoute {
+    public router: Router = Router();
+ 
     constructor() {
-        this.router = express.Router();
+       this.initializeRoutes();
     }
-
-}
+ 
+    protected abstract initializeRoutes(): void;
+ }
 
 export default BaseRoute

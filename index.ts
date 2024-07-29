@@ -8,7 +8,9 @@ const app = express();
 
 const port = process.env.PORT || 3000;
 
-app.use("/post", PostRoute);
+const post = new PostRoute();
+
+app.use(post.router);
 
 app.get("/", (req: express.Request, res: express.Response) => {
     res.send("Hello World!, coba2");
