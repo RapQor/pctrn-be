@@ -18,12 +18,15 @@ const port = process.env.PORT || 5000;
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({
+const corsOptions = {
     origin: 'https://pctrn.vercel.app', // Allow requests from this origin
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS', // Allowed methods
     allowedHeaders: 'Content-Type,Authorization', // Allowed headers
     credentials: true, // If you need to include credentials like cookies
-  }));
+}
+app.use(cors(corsOptions));
+
+app.options('*', cors(corsOptions));
 
 app.use("/uploads",express.static("src/uploads"));
 
