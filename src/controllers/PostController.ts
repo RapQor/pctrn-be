@@ -1,50 +1,65 @@
-import { PostModels } from "../models/PostModels";
-import PostService from "../services/PostService";
-import {BaseController} from "./BaseControlle";
+import { createPostSchema } from "../libs/validations/post";
+import * as postService from "../services/PostService"
+import { Request, Response } from "express";
+import errorHandler from "../utils/errorHandler";
+import { log } from "console";
 
-import { Response, Request } from "express";
+type TFiles = Express.Multer.File[];
 
-class PostController extends BaseController {
+export const findAll = async (req: Request, res: Response) => {
+    const posts = await postService.findAll(+req.params.id);
+    res.json(posts);
+};
 
-    private postServices: PostService;
-
-    constructor(postService: PostService) {
-        super();
-        this.postServices = postService;
-    }
-    public findAll(req: Request, res: Response) {
-        res.send(this.postServices.findAll());
-    }
-
-    public findOne(req: Request, res: Response) {
-        res.send(this.postServices.findOne(+req.params.id));
-    }
-
-    public create(req: Request, res: Response) {
-        const body = req.body;
-
-        const post = this.postServices.create(body.tittle, body.body);
-
-        res.send(post);
-    }
-
-    public update(req: Request, res: Response) {
-        const body = req.body;
-        const id = +req.params.id;
-
-        const post = this.postServices.update(id, body.tittle, body.body);
-
-        res.send(post);
-    }
-
-    public delete(req: Request, res: Response) {
-        const id = +req.params.id;
-
-        this.postServices.delete(id);
-        res.send({
-            message: 'post with id ${id} has been deleted',
-        });
-    }
+export const findOne = async (req: Request, res: Response) => {
+    const post = await postService.findOne(+req.params.id);
+    res.json(post);
 }
 
-export default PostController;
+export const findAllByUser = async (req: Request, res: Response) => {
+    const posts = await postService.findAllByUser(+req.params.id);
+    res.json(posts);
+}
+
+export const create = async (req: Request, res: Response) => {
+    try {
+        // Validasi data input menggunakan Joi atau skema validasi lainnya
+
+        await createPostSchema.validateAsync(req.body);
+        
+        const userId = res.locals.user.id;
+        req.body.userId = userId;
+
+        // Cek apakah ada file yang di-upload
+        if (req.files) {
+            req.body.images = req.files;
+        } else {
+            req.body.images = [];
+        }
+
+        console.log(req.body.image);
+
+        const post = await postService.create(req.body);
+        res.json({
+            
+            message: "Post created successfully",
+            data: post,
+        });
+        
+    } catch (error) {
+        // Menangani error dan mengembalikan respons error
+        errorHandler(res, error as unknown as Error);
+        console.log(error);
+        
+    }
+};
+
+export const update = (req: Request, res: Response) => {
+    const post = postService.update(parseInt(req.params.id), req.body);
+    res.json(post);
+}
+
+export const deletePost = (req: Request, res: Response) => {
+    const post = postService.deletePost(parseInt(req.params.id));
+    res.json(post);
+}

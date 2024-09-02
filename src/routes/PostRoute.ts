@@ -1,31 +1,27 @@
-import PostController from "../controllers/PostController";
-import BaseRoute from "./BaseRoute";
-import express from "express";
+import { Router } from "express";
+import * as postController from "../controllers/PostController";
+import authorization from "../middlewares/authorization";
+import upload from "../middlewares/fileUpload";
+import * as likeController from "../controllers/LikeController";
 
-import PostService from "../services/PostService";
+const postRoute = Router();
 
-class PostRoute extends BaseRoute {
+postRoute.get("/", postController.findAll);
 
-    protected postController: PostController;
-    constructor() {
-        super();
-        const postService = new PostService();
-        this.postController = new PostController(postService);
-    }
+postRoute.get("/:id", postController.findOne);
 
-    protected initializeRoutes() {
-        this.router.get("/post", this.postController.findAll);
+postRoute.get("/user/:id", postController.findAllByUser);
 
-        this.router.get("/post/:id", this.postController.findOne);
+postRoute.post("/", authorization, upload.array('images'), postController.create);
 
-        this.router.post("/post", this.postController.create);
+postRoute.put("/:id", postController.update);
 
-        this.router.put("/post/:id", this.postController.update);
+postRoute.delete("/:id", postController.deletePost);
 
-        this.router.delete("/post/:id", this.postController.delete);
+postRoute.post("/:id/like", authorization, likeController.likePost);
+postRoute.delete("/:id/like", authorization, likeController.unlikePost);
+postRoute.get("/:id/likes", likeController.getLikes);
+postRoute.get("/:id/like/check", authorization, likeController.checkUserLike);
 
-        return this.router;
-    }
-}
 
-export default PostRoute;
+export default postRoute
