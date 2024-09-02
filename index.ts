@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 // }
 app.use(cors({
     origin: 'https://pctrn.vercel.app', // Allowed origin
-    methods: 'GET,POST,PUT,DELETE,OPTIONS', // Allowed methods
+    methods: 'GET,POST,PATCH,DELETE,OPTIONS', // Allowed methods
     allowedHeaders: 'Content-Type, Authorization' // Allowed headers
 }));
 
