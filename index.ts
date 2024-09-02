@@ -24,7 +24,11 @@ app.use(express.urlencoded({ extended: true }));
 //     allowedHeaders: 'Content-Type,Authorization', // Allowed headers
 //     credentials: true, // If you need to include credentials like cookies
 // }
-app.use(cors());
+app.use(cors({
+    origin: 'https://pctrn.vercel.app', // Allowed origin
+    methods: 'GET,POST,PUT,DELETE,OPTIONS', // Allowed methods
+    allowedHeaders: 'Content-Type, Authorization' // Allowed headers
+}));
 
 // app.options('*', cors(corsOptions));
 
