@@ -2,25 +2,25 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
 export default async (req: Request, res: Response, next: NextFunction) => {
-   // extract token from authorization header
+    // Extract token from Authorization header
+    const token = req.headers.authorization?.split(" ")[1];
 
-   console.log( "req.headers.authorization=" + req.headers.authorization);
+    if (!token) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
 
-   const token = req.headers.authorization?.split(" ")[1];
+    try {
+        // Verify token
+        const payload = jwt.verify(token, process.env.SECRET_KEY || "secret");
 
-   if (!token) {
-      return res.status(401).json({ message: "Unauthorized" });
-   }
+        // If the payload is valid, set user in res.locals
+        res.locals.user = payload;
 
-   console.log("token=" + token);
-
-   const payload = jwt.verify(token, process.env.SECRET_KEY || "secret");
-
-   if (!payload) {
-      return res.status(401).json({ message: "Unauthorized" });
-   }
-
-   res.locals.user = payload;
-
-   next();
+        // Proceed to the next middleware or route handler
+        next();
+    } catch (error) {
+        // Handle invalid or expired token
+        console.error("Token verification error:", error);
+        res.status(401).json({ message: "Unauthorized" });
+    }
 };
