@@ -9,6 +9,8 @@ import cors from "cors";
 import userRoute from "./src/routes/UserRoute";
 import followRoute from "./src/routes/FollowRoute";
 
+import { v2 as cloudinary } from "cloudinary";
+
 dotenv.config();
 
 const app = express();
@@ -31,6 +33,12 @@ app.use(cors({
 }));
 
 // app.options('*', cors(corsOptions));
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+ });
 
 app.use("/uploads",express.static("src/uploads"));
 

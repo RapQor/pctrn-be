@@ -30,21 +30,19 @@ export const create = async (req: Request, res: Response) => {
         const userId = res.locals.user.id;
         req.body.userId = userId;
 
-        // Cek apakah ada file yang di-upload
-        if (req.files) {
-            req.body.images = req.files;
-        } else {
-            req.body.images = [];
-        }
-
+        const file = res.locals.image;
         console.log(req.body.image);
 
         const post = await postService.create(req.body);
         res.json({
             
             message: "Post created successfully",
-            data: post,
+            data: {
+                ...post,
+                image: file
+            },
         });
+
         
     } catch (error) {
         // Menangani error dan mengembalikan respons error
