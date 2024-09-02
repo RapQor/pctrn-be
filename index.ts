@@ -19,8 +19,10 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-    origin: 'https://pctrn.vercel.app',
-    optionsSuccessStatus: 200
+    origin: 'https://pctrn.vercel.app', // Allow requests from this origin
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS', // Allowed methods
+    allowedHeaders: 'Content-Type,Authorization', // Allowed headers
+    credentials: true, // If you need to include credentials like cookies
   }));
 
 app.use("/uploads",express.static("src/uploads"));
