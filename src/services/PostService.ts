@@ -100,19 +100,31 @@ export const findAllByUser = async(userId: number) => {
 }
 
 export const create = async (post: IPosts) => {
-    console.log( "post=", post);
+    console.log("post=", post);
     
     const newPost = await db.posts.create({
         data: {
-            ...post,
+            content: post.content,
+            userId: post.userId,
+            parentId: post.parentId,
             images: {
-                create: post.images && post.images.map((image) => ({ image: image.filename })),
+                create: post.images?.map(img => ({ image: img.image })) || []
+            }
+        },
+        include: {
+            images: true,
+            author: {
+                select: {
+                    id: true,
+                    fullName: true,
+                    username: true,
+                    profile_pic: true
+                }
             }
         }
-        
-    }) 
+    });
     
-    return newPost
+    return newPost;
 }
 
 export const update = async (id: number, post: IPosts) => {
@@ -120,7 +132,7 @@ export const update = async (id: number, post: IPosts) => {
         data: {
             ...post,
             images: {
-                create: post.images && post.images.map((image) => ({ image: image.filename })),
+                create: post.images?.map(img => ({ image: img.image })) || []
             }
         },
         where: {id}

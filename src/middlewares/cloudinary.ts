@@ -18,27 +18,32 @@ export const uploadCloudinary = async (
 ) => {
     console.log("uploading");
 
-    const file: CloudinaryFile = req.file as CloudinaryFile;
-    const files: CloudinaryFile[] = req.files as CloudinaryFile[];
-    if (!file && !files) {
+    const image: CloudinaryFile = req.file as CloudinaryFile;
+
+    console.log("ini image= ", image);
+    
+    
+    const images: CloudinaryFile[] = req.files as CloudinaryFile[];
+    if (!image && !images) {
         return res.status(400).send("No file uploaded");
     }
 
-    if (file) {
-        return uploadSingle(file, res, next);
+    if (image) {
+        return uploadSingle(image, res, next);
     } else {
-        return uploadMultiple(files, res, next);
+        return uploadMultiple(images, res, next);
     }
+    
 };
 
 const uploadMultiple = async (
-    files: CloudinaryFile[],
+    images: CloudinaryFile[],
     res: Response,
     next: NextFunction
 ) => {
     try {
         const cloudinaryUrls: string[] = [];
-        for (const file of files) {
+        for (const image of images) {
             const uploadStream = cloudinary.uploader.upload_stream(
                 {
                     resource_type: "auto",
@@ -58,13 +63,13 @@ const uploadMultiple = async (
                     }
                     cloudinaryUrls.push(result.secure_url);
 
-                    if (cloudinaryUrls.length === files.length) {
+                    if (cloudinaryUrls.length === images.length) {
                         res.locals.images = cloudinaryUrls;
                         next();
                     }
                 }
             );
-            uploadStream.end(file.buffer);
+            uploadStream.end(image.buffer);
         }
     } catch (error) {
         console.error("Error in uploadToCloudinary middleware:", error);
@@ -73,7 +78,7 @@ const uploadMultiple = async (
 };
 
 const uploadSingle = async (
-    file: CloudinaryFile,
+    image: CloudinaryFile,
     res: Response,
     next: NextFunction
 ) => {
@@ -100,7 +105,7 @@ const uploadSingle = async (
                 next();
             }
         );
-        uploadStream.end(file.buffer);
+        uploadStream.end(image.buffer);
     } catch (error) {
         console.log("Error in uploadToCloudinary middleware:", error);
         res.status(500).send("Error uploading image");

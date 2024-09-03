@@ -3,6 +3,7 @@ import * as postService from "../services/PostService"
 import { Request, Response } from "express";
 import errorHandler from "../utils/errorHandler";
 import { log } from "console";
+import { IPosts } from "../types/post";
 
 type TFiles = Express.Multer.File[];
 
@@ -30,18 +31,22 @@ export const create = async (req: Request, res: Response) => {
         const userId = res.locals.user.id;
         req.body.userId = userId;
 
-        const file = res.locals.image;
+        const image = res.locals.image;
         console.log(req.body.image);
 
-        const post = await postService.create(req.body);
-        res.json({
-            
+        const postData: IPosts = {
+            ...req.body,
+            userId,
+            images: image ? [{ image: image }] : undefined
+        };
+
+        const post = await postService.create(postData);
+        res.send({
             message: "Post created successfully",
-            data: {
-                ...post,
-                image: file
-            },
+            data: post
         });
+        console.log("ini image di controller= ", image);
+        
 
         
     } catch (error) {

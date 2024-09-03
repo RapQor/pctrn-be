@@ -89,7 +89,7 @@ export const update = async (id: number, post: IPosts) => {
         data: {
             ...post,
             images: {
-                create: post.images && post.images.map((image) => ({ image: image.filename })),
+                create: post.images?.map(img => ({ image: img.image })) || []
             }
         },
         where: {id}
