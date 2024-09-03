@@ -104,9 +104,7 @@ export const create = async (post: IPosts) => {
     
     const newPost = await db.posts.create({
         data: {
-            content: post.content,
-            userId: post.userId,
-            parentId: post.parentId,
+            ...post,
             images: {
                 create: post.images?.map(img => ({ image: img.image })) || []
             }

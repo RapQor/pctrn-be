@@ -36,7 +36,6 @@ export const create = async (req: Request, res: Response) => {
 
         const postData: IPosts = {
             ...req.body,
-            userId,
             images: image ? [{ image: image }] : undefined
         };
 

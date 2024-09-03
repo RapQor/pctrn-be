@@ -11,7 +11,7 @@ postRoute.get("/", postController.findAll);
 postRoute.get("/:id", postController.findOne);
 postRoute.get("/user/:id", postController.findAllByUser);
 
-postRoute.post("/", authorization, upload.single('file'), uploadCloudinary, postController.create);
+postRoute.post("/", authorization, upload.single('image'), uploadCloudinary, postController.create);
 
 postRoute.put("/:id", postController.update);
 postRoute.delete("/:id", postController.deletePost);
